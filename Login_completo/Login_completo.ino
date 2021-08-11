@@ -42,9 +42,6 @@ void loop()
     if (Serial.available() > 0)
     {
       Valor = Serial.read();
-      Serial.println(Valor);
-      // float Money= Valor_in.toDouble(); // money es el cantiad a retirar,ingresada
-      //Serial.println(Money);
     }
      break;
   }
@@ -70,13 +67,10 @@ void loop()
         Valor = 'D';
       }
       delay (1000);
-      Menu_Bienvenida();
+      
     }
+    Menu_Bienvenida();
   }
-   
-  
-  
- 
 }
 
 
@@ -87,6 +81,7 @@ void Menu_Bienvenida()
     Serial.println("A. Registrar usuario");
     Serial.println("B. Ingresar");
     Serial.println("C. CONSULTAR BASE DE DATOS");
+    Serial.println(" ");
 }
 
 
@@ -95,16 +90,15 @@ bool CHECK_LOGIN()
 {
   
   bool flag = false;
-  for (int i = 0; i < 3; i = i + 1)
+  for (int i = 0; i <= cont1; i = i + 1)
   {
     //Serial.print("valor de la lista :"); Serial.println(list_nombre.nombres[i]);
     if (list_nombre.nombres[i] == Valor_in)
     {
-      Serial.println("INGRESA TU CONTRASEÑA");
-      //delay(2000);
-      //Serial.println("Digite su contraseña");
-      cont_login = cont_login + 1 ;
+      cont_login = i; 
       E_ID = true;
+      flag = true;
+      Serial.print("INGRESA TU CONTRASEÑA: ");
       break;
     }
   }
@@ -164,22 +158,35 @@ void V_CREDENCIALES (){
   data_serial();
   CHECK_LOGIN();
 
-  if (E_ID)
+  if (E_ID)  // REVISAR BIEN LA VALIDACION CON LA POSICION DEL USUARIO EN EL ARRAY
   {
        
-      data_serial();
-      if ( Valor_in == list_cont.contras[cont_login] )
+      data_serial(); // PEDIMOS EL VALOR DE LA CONTRASEÑA
+      while (true)
       {
-        Serial.print(Valor_in);
-        Serial.print( list_cont.contras[cont_login] );
+        
+        if ( Valor_in == list_cont.contras[cont_login] ) // ERROR, SI YA HAY UN USER REGISTRADO: CONT_LOGIN ES 1.
+       {
+        Serial.println( "TU CONTRASEÑA ES:" );
+        Serial.println( list_cont.contras[cont_login] );
+        Serial.println( "SE ECNUENTRA EN LA POSICION: " );
+        Serial.println( cont_login );
+        Serial.println("...................");
         V_PSS = true;
-      }
+        break;
+       }
+       else
+          {
+           Serial.print("Vuelve a escribir la contraseña");          
+          }
+      }  
     
   }
 
   if (V_PSS == true && E_ID == true)
   {
     Serial.println("Contraseña VALIDA");
+    Serial.println("...................");
     Valor = 0;
     Menu_Bienvenida();
 
@@ -207,7 +214,7 @@ void REGISTRAR_USUARIO(){
         Serial.println(list_nombre.nombres[cont1]);
         cont1 = cont1 + 1;
         Serial.println(" ");
-        Serial.println("Ingrese Su Contraseña: ");
+        Serial.print("Ingrese Su Contraseña: ");
         Valor = 0;
         break;
       }
